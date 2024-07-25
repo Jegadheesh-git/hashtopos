@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class='lg:p-8'>
+    <h1 class="font-bold">Purchase From Vendors</h1>
+
+    <div class="mt-8 grid lg:grid-cols-2 grid-cols-1 gap-4">
+        {% for vendor_name, vendor_data in vendor_purchases.items %}
+
+        <div class="bg-gray-200 p-4 rounded-lg shadow-lg">
+        <div class="flex gap-4">
+            <h2 class='text-blue-500'>{{ vendor_name }} - </h2>
+            <p class="font-bold text-blue-700 send-order" id="{{vendor_name}}">📞 {{ vendor_data.phoneNumber }}</p>
+        </div>
+           
+            <div class="my-8">
+                {% for purchase in vendor_data.purchases %}
+                    <p class="{{vendor_name}}-purchase-note">
+                        {{ purchase.itemName }} - {{ purchase.quantity }} {{purchase.quantityType}}
+                    </p>
+                {% empty %}
+                    <p>No purchases found for this vendor.</p>
+                {% endfor %}
+            </div>
+            </div>
+            
+        {% endfor %}
+    </div>
+    
+</div>
+
+<script>
+    $(document).ready(function() {
+  $('.send-order').click(function() {
+
+    var vendorName = $(this).attr('id');
+    textToCopy = '';
+    $("."+vendorName+"purchase-note").each(function() {
+    var thisText = $(this).text();
+    // Process each paragraph text here (e.g., display in an element)
+    textToCopy += thisText;
+    });
+    alert(textToCopy);
+    navigator.clipboard.writeText(textToCopy).then(function() {
+                console.log('Text copied to clipboard');
+                // Display success message
+                const copyMessage = "hello from hash!";
+                copyMessage.style.display = "block";
+
+                // Hide the message after 2 seconds
+                setTimeout(() => {
+                    copyMessage.style.display = "none";
+                }, 2000);
+            }).catch(function(err) {
+                console.error('Could not copy text: ', err);
+            });
+
+    var phoneNumber = "+917397543817"; // Replace with the desired phone number
+    var message = "Hello, how can I help you?"; // Replace with your message
+
+    // Ensure proper URL encoding to handle special characters in the message
+    var encodedMessage = encodeURIComponent(message);
+
+    // Construct the WhatsApp URL with the phone number and encoded message
+    var url = "https://wa.me/" + phoneNumber + "?text=" + encodedMessage;
+
+    // Open the URL in a new tab/window (consider user preference for desktop usage)
+    if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+      // Mobile device: Open in WhatsApp app (if installed)
+      window.location.href = url;
+    } else {
+      // Desktop device: Offer option to open in WhatsApp Web or new tab
+      
+      window.open(url, "_blank");
+      
+    }
+  });
+});
+
+</script>
+
+{% endblock %}

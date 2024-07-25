@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="p-8">
+    <form method="POST">
+        {% csrf_token %}
+    <div class="flex gap-4">
+        <h1>Daily TODO's</h1>
+        <input type="submit" value="Update" class="bg-blue-700 px-2 font-bold text-gray-100 rounded-lg">
+    </div>
+<div class="p-4">
+    {% for dailyTask in dailyTasks %}
+        <div>
+            {% if not dailyTask.hasCompleted %}
+                <div class="flex gap-2">
+                <input type="checkbox" name="{{dailyTask.id}}">
+                <p>{{dailyTask.task.name}}</p>
+                </div>
+            {% else %}
+                <p class="line-through">{{dailyTask.task.name}}</p>
+            {% endif %}
+        </div>
+    {% endfor %}
+</div>
+</form>
+</div>
+{% endblock %}

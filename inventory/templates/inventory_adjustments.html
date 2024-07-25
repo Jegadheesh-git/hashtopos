@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div>
+  
+  <h1 class="font-bold">Inventory Adjustment</h1>
+<div class="flex mt-2 gap-8 flex-col lg:flex-row ">
+
+    <div class="bg-gradient-to-r from-gray-300 to-blue-100 lg:w-1/2 rounded-lg shadow-lg p-4 h-64">
+        <form class="">
+            <div class="flex gap-1 border-b-2 border-gray-400 p-1 w-full">
+                <p class="w-1/12">&#x1F50E;</p>
+                <input type="text" id="search-input" placeholder="Enter Item name" class="bg-gray-800 w-11/12 bg-opacity-0 focus:outline-none focus:ring-0">
+            </div>
+        </form>
+        <div id="search-results" class="px-1 py-2 mt-1 flex flex-col gap-1 h-36 overflow-y-auto "></div>
+    </div>
+
+    <div class="mt-4 lg:w-1/2">
+      <form method="POST">
+      {% csrf_token %}
+
+      <div class="flex lg:gap-8 lg:flex-row flex-col gap-2 border-b-2 border-gray-200 p-4">
+        <div class="flex gap-2">
+          <p class="font-bold">Total Items</p>
+          <p class="font-bold text-gray-100 px-2 text-center rounded-full bg-gray-800" id="total-items">0</p>
+        </div>
+        <div class="flex gap-2">
+            <p>Type</p>
+            <select name="wastageType" id="" class="rounded-lg border-2 border-gray-300">
+                {% for wastageType in wastageTypes %}
+                    <option value="{{wastageType}}">{{wastageType}}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <input type="submit" class="bg-blue-800 font-bold px-2 rounded-lg text-gray-100" id="add-purchase-btn" value="Adjust">
+      </div>
+        
+        <div id="purchase-items" class="p-2 mt-4 flex flex-col gap-2 h-96 overflow-y-auto"></div>
+        
+        </form>
+    </div>
+
+</div>
+</div>
+<script>
+  var totalItems = 0
+  var purchaseItemsSet = new Set();
+  var purchaseItemObj = new Object();
+    $(document).ready(function() {
+      
+      $("#search-input").keyup(function() {
+        var searchQuery = $(this).val();
+        // Send AJAX request when user types in the search bar
+        $.ajax({
+          url: "/inventory/search/", // Replace with your actual URL pattern
+          type: "GET",
+          data: { q: searchQuery },
+          success: function(data) {
+            displaySearchResults(data);  // Update results section
+          },
+          error: function(error) {
+            console.error("Error:", error); // Handle errors
+          }
+        });
+      });
+    });
+
+    function displaySearchResults(data) {
+  $("#search-results").empty(); // Clear previous results
+
+  // Loop through the data and create your desired HTML structure
+  $.each(data.search_results, function(index, item) {
+    console.log(item);
+
+    // Create the search result item element
+    //var html = "<div class='search-result-item flex gap-2 cursor-pointer hover:bg-gray-200 p-1 rounded-lg hover:shadow-sm itemDiv' id='" + item.pk + "'><h2 class='text-sm'>"+item.name+"</h2></div>";
+    var searchDiv = $('<div>').addClass('search-result-item flex gap-2 cursor-pointer hover:bg-gray-200 p-1 rounded-lg hover:shadow-sm itemDiv');
+    searchDiv.attr('id',item.pk);
+    searchDiv.data('unit',item.quantityType);
+    var itemName = $('<p>').addClass('text-sm');
+    itemName.text(item.name);
+    searchDiv.append(itemName).on('click',function(){
+
+      
+      var clickedId = $(this).attr('id');
+
+      if(!purchaseItemsSet.has(clickedId)){
+      var clickedName = $(this).find('.text-sm').text(); // Get name from paragraph
+      totalItems += 1;
+      purchaseItemsSet.add(clickedId);
+      $('#total-items').text(totalItems);
+      // Create purchase item element with content (optional)
+      
+      var purchaseItemDiv = $('<div>')
+        .addClass('grid grid-cols-1 lg:grid-cols-4 gap-2 justify-between bg-gray-200 py-2 px-4 shadow-md')
+        .attr('id',clickedId)
+        .append($('<p>').text(clickedName))
+        .append($('<input>').attr('type','number').attr('step','0.01').addClass('border-2 border-gray-300 rounded-lg px-2').attr('name','quantity-'+clickedId))
+        .append($('<p>').text('unit'))
+        .append($('<div>').addClass('flex justify-end').append($('<p>').text('X').addClass('font-bold text-gray-100 bg-red-600 rounded-full p-1 w-8 h-8 text-center bg-opacity-50 cursor-pointer hover:bg-opacity-100')).on('click',function(){
+            var purchaseItemDiv = $(this).parent();
+            purchaseItemDiv.remove();
+            purchaseItemsSet.delete($(this).parent().attr('id'));
+
+            totalItems -= 1;
+            $('#total-items').text(totalItems);
+          }));
+        
+        
+
+      // Append the purchase item element to the container (replace with your selector)
+      $('#purchase-items').append(purchaseItemDiv);
+
+      console.log("Clicked search result ID:", clickedId);
+      console.log("Clicked search result name:", clickedName);
+    }
+    });
+
+    $('#search-results').append(searchDiv);
+    console.log(searchDiv)
+
+  });
+}
+
+  </script>
+{% endblock %}

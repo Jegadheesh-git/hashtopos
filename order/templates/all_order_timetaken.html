@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="p-2">
+    <h1 class="my-2">All Orders TimeTakens</h1>
+    <div class="lg:w-2/3 flex flex-col gap-2">
+        {% for order in orders %}
+            <div class="grid grid-cols-1 lg:grid-cols-4 bg-gray-300 px-2 py-1">
+                <p>{{order.orderDateTime}}</p>
+                <p>{{order.orderDeliveredDateTime}}</p>
+                <p class="duration font-bold text-blue-800">  {{ order.totalTimeTakenForPreparation }}</p>
+                <div class="flex justify-end">     
+                <p class="bg-blue-400 px-2 rounded-full text-gray-100 w-6 font-bold text-center expander">i</p>         
+                </div>  
+            </div>
+            <div class="order-summary hidden">
+                <table class="lg:w-2/3 text-left">
+                    <thead><th>Item</th><th>Quantity</th></thead>
+                    <tbody>
+                        {% for orderItem in order.orderItems.all %}
+                            <tr>
+                                <td>{{orderItem.menuItem.name}}</td>
+                                <td class="text-right lg:text-left">{{orderItem.quantity}}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+    $(document).ready(function(){
+        $('.duration').each(function(index, element){
+                
+                time = $(this).text().split('.')[0];
+                parts = time.split(':');
+                minutes = parts[1];
+                seconds = parts[2];
+                timeText = minutes+':'+seconds;
+                $(this).text('🕗 '+timeText);
+            });
+
+        $('.expander').click(function(){
+            $('.order-summary').addClass('hidden');
+            $(this).parent().parent().next().removeClass('hidden');
+        });
+    });
+</script>
+
+{% endblock %}

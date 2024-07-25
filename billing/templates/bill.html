@@ -1,0 +1,162 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <form method="POST">
+        {% csrf_token %}
+        <input type="text" value="{{order.id}}" class="hidden" id="orderId">
+        <div class="lg:w-11/12 w-full lg:px-4 lg:ml-8 lg:mt-8">
+            <div class="lg:w-2/3 w-full">
+                <div>
+                <p class="bg-gray-700 text-gray-100 px-2 py-1 ">ORDER ID: {{order.id}} {{order.orderDateTime}}</p>
+                </div>
+                <div>
+                    <p class="mt-2 font-bold">Order Summary</p>
+                    <table class="table lg:w-3/4 w-full text-left mt-4 text-sm">
+                        <thead class="bg-gray-300"><th class="px-2 py-1">Item</th><th class="px-2 py-1">Price</th><th class="px-2 py-1">Qty</th><th class="px-2 py-1">Total Price</th>
+                         {% if order.totalParcelCharge > 0 %}
+                         <th class="px-2 py-1">Parcel Charge</th>
+                         {% endif %}
+                         </thead>
+                        <tbody>
+                                {% for orderItem in order.orderItems.all %}
+                                <tr>
+                                    <td>{{orderItem.menuItem.name}} </td>
+                                    <td> {{orderItem.menuItem.price}} </td>  
+                                    <td> {{orderItem.quantity}} </td> 
+                                    <td class="flex gap-2"> 
+                                        <p>{{orderItem.finalPrice}}</p> 
+                                        {% if orderItem.finalPrice != orderItem.totalPrice %}
+                                        <p class="line-through opacity-60 text-sm">({{orderItem.totalPrice}})</p> 
+                                        {% endif %}
+                                        </td>
+                                    {% if order.totalParcelCharge > 0 %}
+                                        <td>
+                                            {% if orderItem.parcelCharge > 0 %}
+                                                {{orderItem.parcelCharge}}
+                                            {% endif %}
+                                        </td>
+                                    {% endif %}
+                                    
+                            
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                    </table>
+                    <div  class="flex justify-end lg:px-4 lg:w-2/3  mt-2 gap-1">
+                        
+                        {% if order.totalPrice == order.finalPrice %}
+                        <p>Total Amount : {{order.finalPrice}}</p>
+                        {% else %}
+                        <p>Total Amount : {{order.finalPrice}}</p>
+                        <p class="text-sm opacity-60 line-through">( {{order.totalPrice}} )</p>
+                        {% endif %}
+                            
+                        <p>
+                            {% if order.totalParcelCharge > 0 %}
+                                + {{order.totalParcelCharge}} (parcel)
+                            {% endif %}
+                        </p>
+                    </div>
+                    <div  class="flex justify-end lg:px-4 lg:w-2/3 mt-2 lg:gap-4"><p>Final Amount (After Discount) : </p>  <p class="text-xl font-bold text-blue-800">₹ {{order.finalPriceIncludedParcel}}</p></div>
+
+                </div>
+
+                <div>
+                    <p class="font-bold text-sm hidden lg:block">Coupon & Loyalty</p>
+                    {% if order.hasCouponApplied %}
+                        <div class="mt-2 flex gap-1">
+                            <p class="bg-gradient-to-r from-green-700 to-blue-700 text-gray-100 font-bold px-2">{{order.couponUsed.name}}</p>
+                            <p class="bg-red-500 px-2 font-bold text-gray-100 opacity-70 rounded-full" id="removeCouponBtn">X</p>
+                        </div>
+                    {% else %}
+
+                        <div class="mt-2 flex gap-2">
+                            <input type="text" placeholder="Coupon Code" class="border-gray-300 border-2 px-2 rounded-lg " id="couponCode">
+                            <p class="bg-blue-900 text-gray-100 px-2 rounded-lg font-bold cursor-pointer" id="couponCodeBtn">APPLY</p>
+                        </div>
+                        <p id="coupon-message"></p>
+                    {% endif %}
+                </div>
+  
+                <div class="mt-4">
+                    <p class="font-bold text-sm">Payment Details</p>
+                    <div>
+                        <input type="text" placeholder="Customer Number" class="border-gray-300 border-2 px-2 rounded-lg mt-4" name="customer" id="customer">
+                        <div class="flex gap-4 py-2">
+                        <p>Mode of Payment</p>
+                        <select name="modeOfPayment" id="" class="border-2 border-gray-600 px-2 rounded-lg">
+                            {% for mode in modeOfPayment %}
+                                <option value="{{mode}}">{{mode}}</option>
+                            {% endfor %}
+                        </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4 flex gap-4 justify-end bg-gray-200 p-2">
+                    <input type="submit" value="Save" class="bg-gray-800 font-bold text-gray-100 px-2 py-1 rounded-lg cursor-pointer">
+                </div>
+
+            </div>
+    </div>
+    </form>
+
+
+<script>
+    $(document).ready(function(){
+        
+        $('#couponCodeBtn').click(function(){
+            var couponCode = $('#couponCode').val();
+            var orderId = $('#orderId').val();
+        
+            csrfToken =  $('input[name="csrfmiddlewaretoken"]').val();
+            $.ajax({
+                type:'GET',
+                url: "/loyalty/check-coupon",
+                
+                data: {
+                    'couponCode': couponCode,
+                    'orderId': orderId,
+                    'csrfmiddlewaretoken': csrfToken
+                },
+                dataType: "json",
+                success: function(response){
+                    
+                    var message = response.message;
+                    console.log(message);
+                    window.location.reload();
+                    
+                },
+                error: function(){alert('error')},
+                })
+                }
+                )
+
+            $('#removeCouponBtn').click(function(){
+            var orderId = $('#orderId').val();
+
+            csrfToken =  $('input[name="csrfmiddlewaretoken"]').val();
+            $.ajax({
+                type:'GET',
+                url: "/loyalty/remove-coupon",
+                
+                data: {
+                    'orderId': orderId,
+                    'csrfmiddlewaretoken': csrfToken
+                },
+                dataType: "json",
+                success: function(response){
+                    
+                    var message = response.message;
+                    console.log(message);
+                    window.location.reload();
+                    
+                },
+                error: function(){alert('error')},
+                })
+                }
+                )
+
+    });
+</script>
+{% endblock %}

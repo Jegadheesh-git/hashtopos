@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block content %}
+
+    <div>
+        <p class="font-bold">All Settlements</p>
+        <div class="w-2/3">
+            <table class="mt-4 w-full text-left">
+                <thead class="bg-gray-300"><th>Date & Time</th><th>To be settled</th><th>Payed</th><th>Balance</th><th>Balance Carried To</th></thead>
+                <tbody>
+                    {% for settlement in settlements %}
+                        <tr>
+                            <td>{{settlement.dateTime}}</td>
+                            <td>{{settlement.totalAmountToBeSettled}}</td>
+                            <td>{{settlement.paymentRecieved}}</td>
+                            <td >{{settlement.balancePayment}}</td>
+                            <td>{{settlement.balanceAmountCarryForwardedOn}}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <form method="POST">
+    <div class="flex justify-between w-full lg:w-1/2 mt-4">
+        <h1 class="font-bold">Parcel Charges</h1>
+        <input type="submit" value="Place Order" class="bg-blue-600 text-gray-100 rounded-lg font-bold px-4 py-1 text-sm">
+    </div>
+    <div>
+        <input type="text" name="note" placeholder="Notes" value="{{item.note}}" class="border-2 border-gray-400 rounded-xl px-2 my-4">
+    </div>
+    
+        {% csrf_token %}
+    <div class="text-sm lg:text-lg mt-4">
+        
+        <table class="w-full lg:w-1/2 text-left">
+            <thead class="bg-gray-400"><th>Item</th><th>Q</th><th>PC</th><th>Is Parcel</th><th>Parcel Qty</th></thead>
+            <tbody>
+                {% for item in order.orderItems.all %}
+                    <tr >
+                        <td class="p-1">{{item.menuItem.name}}</td>
+                        <td class="p-1">{{item.quantity}}</td>
+                        <td class="p-1">{{item.menuItem.parcelCharge}}</td>
+                        <td class="p-1"><input type="checkbox" class="w-5 h-5" name="{{item.id}}" {% if item.isParcel %}checked{% endif %}></td>
+                        <td class="p-1"><input type="number" class="w-1/4 text-center rounded-xl border-2 border-gray-300" value="{{item.parcelQuantity}}" name="pqty{{item.id}}"></td>
+                        
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    </form>
+
+{% endblock %}

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div id="nav-bar">
+        {% if user.is_authenticated %}
+        <ul><a href="{% url 'logout' %}">logout</a></ul>
+        <ul><a href="{% url 'get_menu' %}"> dashboard</a></ul>
+
+        {% else %}
+        <ul><a href="{% url 'login' %}">login</a></ul>
+        {% endif %}
+    </div>
+</body>
+</html>

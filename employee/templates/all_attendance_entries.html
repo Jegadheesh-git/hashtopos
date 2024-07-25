@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div>
+    <p>All Attendance Entries</p>
+    <div class="my-4">
+    <form method="GET">
+        {% csrf_token %}
+        <input type="date" name="date">
+        <input type="submit" value="Get" class="bg-blue-600 font-bold text-gray-100 px-2 rounded-xl">
+    </form>
+    </div>
+
+    <div class="mt-8">
+        {% for dailyAttendance in dailyAttendances %}
+            <div class="bg-gray-300 flex gap-4 my-2 flex-col p-2 lg:flex-row">
+                <p class="font-bold">{{dailyAttendance.employee}}</p>
+                <p>{{dailyAttendance.date}}</p>
+                <p>{{ dailyAttendance.entryTime }}</p>
+                <p>{{dailyAttendance.exitTime}}</p>
+                <p>{{ dailyAttendance.totalWorkingHours }}</p>
+            </div>
+
+            {% if not dailyAttendance.isPresent%}
+                <div><p class="font-bold text-red-700">{{dailyAttendance.leaveType}}</p><p>{{dailyAttendance.reason}}</p></div>
+            {% endif %}
+
+            {% for attendanceEntry in dailyAttendance.attendanceEntries.all %}
+            <div class="flex gap-2 flex-col lg:flex-row my-2 border-2 border-gray-400 rounded-xl px-2 lg:border-0"><p>{{attendanceEntry.loginTime}}</p><p>{{attendanceEntry.logoffTime}}</p><p>{{attendanceEntry.totalWorkingHours}}</p></div>
+            {% endfor %}
+        {% endfor %}
+    </div>
+</div>
+
+
+{% endblock %}

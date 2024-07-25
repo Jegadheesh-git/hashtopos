@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hashtopia Foods</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    
+    <div class="flex h-screen flex-col lg:flex-row">
+        <div class="bg-gray-800 lg:w-1/12 flex flex-col">
+            <h3 class="text-gray-100 font-bold text-lg bg-gray-900 text-center pt-5 pb-5">Hashtopia</h3>
+
+            <div class="p-1 flex flex-row gap-4 lg:flex-col lg:gap-2 text-gray-400 justify-center">
+                <p><a href="">New Order</a></p>
+                <p><a href="{% url 'all_orders' %}">All orders</a></p>
+                <p><a href="{% url 'unbilled_orders' %}">Unbilled orders</a></p>
+                <p>Billing</p>
+            </div>
+        </div>
+        <div class="lg:w-11/12 px-4 py-4">
+            <div class=" w-1/3">
+                <p class="bg-blue-800 text-gray-100 px-2 rounded-t-lg w-1/3 font-bold text-center">Search Item </p>
+                <div class="w-2/3">
+                    <input type="text" class="border-2 border-gray-600 rounded-r-lg w-full" id="search-bar">
+                    <div id="search-result">
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+
+
+</body>
+
+<script>
+    $(document).ready(function() {
+            var menuItems = "{{menu_items}}";
+            
+            console.log(menuItems);
+            
+       
+    });
+
+</script>
+
+</html>

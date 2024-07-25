@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="p-2">
+    <p class="font-bold">Shopping List</p>
+    <div class="mt-4">
+        {% for itemToPurchase in dailyInventoryCheck.itemsToPurchase.all %}
+            {% if not itemTopurchase.purchased %}
+            <div class="flex gap-2 p-2">
+                <p>{{itemToPurchase.item.name}}</p>
+                <p>-</p>
+                <div class="flex gap-1">
+                <p>{{itemToPurchase.item.requiredPurchaseQuantity}}</p>
+                
+                <p>{{itemToPurchase.item.quantityType}}</p>
+                
+                </div>
+
+            </div>
+            {% endif %}
+
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}

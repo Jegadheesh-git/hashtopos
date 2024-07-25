@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="lg:p-8">
+    <div class="flex justify-between px-4 my-4 lg:flex-row flex-col">
+    <h1 class="font-bold">Purchase Aggregated Data</h1>
+
+    <form method="GET">
+        <div class="flex gap-2 lg:flex-row flex-col">
+        <p class="font-bold">From : </p>
+        <input type="date" name="start-date" class="border-2 border-gray-300 rounded-lg px-2">
+        <p>To</p>
+        <input type="date" name="end-date" class="border-2 border-gray-300 rounded-lg px-2">
+        <input type="submit" value="Filter" class="bg-blue-800 px-2 rounded-lg text-gray-100">
+        </div>
+    </form>
+    </div>
+
+     <table class="lg:w-1/4 text-left w-full">
+            <thead class="bg-gray-300"><th>Item</th><th>Qty</th><th>Price</th></thead>
+            <tbody>
+                {% for item in purchaseQuantityData %}
+                <tr>
+                    <td>{{ item.item__name }}</td>
+                    <td>{{ item.total_quantity_purchased }} {{ item.item__quantityType }}</td>
+                    <td>{{ item.total_amount_purchased }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+</div>
+
+{% endblock %}

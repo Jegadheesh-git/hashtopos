@@ -1,0 +1,166 @@
+{% extends 'base.html' %}
+{% block content %}
+<script src="https://www.gstatic.com/charts/loader.js"></script>
+
+
+<div class="lg:p-4 text-sm md:text-md">
+    <div class="flex justify-between lg:px-4 lg:flex-row flex-col">
+    <h1 class="font-bold">Sales Dashboard</h1>
+
+    <form method="GET">
+        <div class="flex gap-2 lg:flex-row flex-col">
+        <p class="font-bold">From : </p>
+        <input type="date" name="start-date" class="border-2 border-gray-300 rounded-lg px-2">
+        <p>To</p>
+        <input type="date" name="end-date" class="border-2 border-gray-300 rounded-lg px-2">
+        <input type="submit" value="Filter" class="bg-blue-800 px-2 rounded-lg text-gray-100">
+        </div>
+    </form>
+    </div>
+
+    <div class="grid lg:grid-cols-4 mt-4 shadow-lg">
+        <div class="bg-gradient-to-r from-blue-500 to-blue-400 text-gray-100 p-4 lg:rounded-l-lg">
+            <p>Total Bills</p>
+            <p class="text-3xl">{{totalBills}}</p>
+        </div>
+        <div class="bg-gradient-to-r from-blue-900 to-blue-600 text-gray-100 p-4">
+            <p>Total Over-all Collection </p> 
+            <p class="text-3xl">{{totalCollectionAmount}}</p>
+            <p>{{totalSaleAmount}} Sales + {{totalParcelAmount}} Parcel</p>
+        </div>
+        <div class="bg-gradient-to-r from-yellow-600 to-yellow-400 text-gray-100 p-4">
+            <p>Hashtopia's Share ( {{settlementPercentage }}% )</p>
+            <p class="text-3xl"> {{totalAmountToBePaidIncludingParcel}}</p>
+            <p>{{totalAmountToBePaid}} + {{totalParcelAmount}}</p>
+        </div>
+        <div class="bg-gradient-to-r from-green-900 to-green-600 text-gray-100 p-4 lg:rounded-r-lg">
+            <p>Fresh 2 Fresh Share </p> 
+            <p class="text-3xl">{{totalAmountToKeep}}</p>
+        </div>
+        
+    </div>
+
+    <div class="mt-4">
+        <p class="my-4">Sales Chart</p>
+        <div>
+
+        <div class="grid lg:grid-cols-5 gap-2">
+            <div>
+                <p>Average Bills per Day</p>
+                <p class="text-2xl">{{average_bills_per_day}}</p>
+            </div>
+            <div>
+                <p>Average sales per Day</p>
+                <p class="text-2xl">{{average_sales_per_day}}</p>
+            </div>
+            <div>
+                <p>Average F2F share</p>
+                <p class="text-2xl">{{average_fresh_share_per_day}}</p>
+            </div>
+            <div>
+                <p>Average HF share</p>
+                <p class="text-2xl">{{average_hashtopia_share_per_day}}</p>
+            </div>
+            <div>
+                <p>Average HF settlement</p>
+                <p class="text-2xl">{{average_hashtopia_payment_per_day}}</p>
+            </div>
+        </div>
+            
+        <div class="flex gap-2 justify-between lg:flex-row flex-col">
+          <div id="curve_chart" class="lg:w-1/2 h-96"></div>
+          <div id="om_curve_chart" class="lg:w-1/2 h-96"></div>
+        </div>
+ 
+
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+        google.charts.load('current', {'packages':['corechart']});
+        google.charts.setOnLoadCallback(drawChart);
+
+        function drawChart() {
+            var data = new google.visualization.DataTable();
+            data.addColumn('string', 'Date');
+            data.addColumn('number', 'Sales');
+
+            var salesData = [
+                {% for date, sale in sales_data %}
+                    ['{{ date }}', {{ sale }}],
+                {% endfor %}
+            ];
+
+            data.addRows(salesData);
+
+            var options = {
+                title: 'Sales Over Time',
+                curveType: 'function',
+                legend: { position: 'bottom' }
+            };
+
+            var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+
+            chart.draw(data, options);
+        }
+    </script>
+
+    <script type="text/javascript">
+        google.charts.load('current', {'packages':['corechart']});
+        google.charts.setOnLoadCallback(drawChart);
+
+        function drawChart() {
+            var data = new google.visualization.DataTable();
+            data.addColumn('string', 'Date');
+            
+            // Add columns for each order mode
+            {% for order_mode in om_sales_dict.keys %}
+                data.addColumn('number', '{{ order_mode }}');
+            {% endfor %}
+
+            var salesData = [];
+
+            // Get all dates to ensure all series have entries for all dates
+            var allDates = new Set();
+            {% for sales in om_sales_dict.values %}
+                {% for date, sale in sales %}
+                    allDates.add('{{ date }}');
+                {% endfor %}
+            {% endfor %}
+            
+            // Create a dictionary to hold sales for each date and order mode
+            var salesByDate = {};
+            {% for order_mode, sales in om_sales_dict.items %}
+                {% for date, sale in sales %}
+                    if (!salesByDate['{{ date }}']) {
+                        salesByDate['{{ date }}'] = {};
+                    }
+                    salesByDate['{{ date }}']['{{ order_mode }}'] = {{ sale }};
+                {% endfor %}
+            {% endfor %}
+            
+            // Prepare the sales data array
+            allDates.forEach(function(date) {
+                var row = [date];
+                {% for order_mode in om_sales_dict.keys %}
+                    row.push(salesByDate[date] ? salesByDate[date]['{{ order_mode }}'] || 0 : 0);
+                {% endfor %}
+                salesData.push(row);
+            });
+
+            data.addRows(salesData);
+
+            var options = {
+                title: 'Sales Over Time by Order Mode',
+                curveType: 'function',
+                legend: { position: 'bottom' }
+            };
+
+            var chart = new google.visualization.LineChart(document.getElementById('om_curve_chart'));
+
+            chart.draw(data, options);
+        }
+    </script>
+
+{% endblock %}

@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% block content %}
+            <p class="mb-4 text-sm font-bold">{{displayName}}</p>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+            {% for order in orders %}
+                <div class="bg-gray-200 rounded-lg shadow-lg">
+                    <div class="flex">
+                        <p class="bg-blue-900 text-gray-100 py-1 px-2 w-2/3 rounded-tl-lg">{{order.orderDateTime}}</p>
+                        <p class="   w-1/3 text-gray-200 px-4 rounded-tr-lg {{order.orderStatus.colour}}">{{order.orderStatus.name}}</p>
+                    </div>
+                    <div class="px-4 py-2 text-sm">
+                        <table class="table w-full text-left">
+                            <thead>
+                                <th>Item</th>  <th>Qty</th> 
+                            </thead>
+                            <tbody>
+                                {% for orderItem in order.orderItems.all %}
+                                <tr class="bg-gray-100">
+                                    <td class="flex flex-col gap-2">
+                                        <div class="flex gap-2">
+                                            <p>{{orderItem.menuItem.name}}</p>
+        
+                                            {% if orderItem.isParcel %}
+                                                <p class="font-bold bg-red-800 px-2 text-gray-200 rounded-sm opacity-60">P {{orderItem.parcelQuantity}}</p>
+                                            {% endif %}
+                                        </div> 
+                                        
+                                    </td>
+                                    
+                                    <td> {{orderItem.quantity}} </td> 
+  
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="text-sm flex flex-col gap-1 p-2 px-4 text-gray-700">
+                        <p class="font-bold">Special Notes</p>   
+                        <p>{{order.note}}</p>
+                    </div>
+                    <div  class="flex justify-end px-4"><p>Total - {{order.finalPriceIncludedParcel}}</p></div>
+
+                    <div class="flex justify-end gap-6 p-8 cursor-pointer ">
+                        <p class="font-bold text-sm px-1 rounded-lg opacity-90 {{order.orderMode.colour}}">{{order.orderMode.name}}</p>
+
+                        {% if order.orderStatus.name != 'Completed' %}
+                            <p class="text-blue-600"><a href="{% url 'edit_order' order.id %}">📝Edit</a></p>
+                        {% endif %}
+                        {% if order.orderStatus.name == 'InProgress' %}
+                            <p class="bg-gray-300 px-2 rounded-lg">
+                                <a href="{% url 'move_to_ready' order.id %}">Ready</a>
+                            </p>
+                        {% endif %}
+                        {% if order.orderStatus.name == 'Ready' %}
+                            <p class="bg-gray-300 px-2 rounded-lg">
+                                <a href="{% url 'generate_bill' order.id %}">Bill</a>
+                            </p>
+                        {% endif %}
+                    </div>            
+
+                </div>
+            {% endfor %}
+            </div>
+{% endblock %}
+        

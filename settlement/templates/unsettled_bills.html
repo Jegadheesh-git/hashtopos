@@ -1,0 +1,156 @@
+{% extends 'base.html' %}
+{% block content %}
+<form method="POST">
+    {% csrf_token %}
+<div class="flex flex-col lg:flex-row text-sm lg:text-md">
+    <div class="lg:w-3/5 lg:px-8">
+    <div>
+        <div class="flex gap-2 font-bold">All Un-Settled Bills
+            <p class="font-bold text-gray-100 bg-gray-800 rounded-full h-6 w-8 text-center">{{billCount}}</p>
+        </div>
+    </div>
+
+    <div class="grid lg:grid-cols-4 gap-4 grid-cols-1 my-6 bg-gradient-to-r from-blue-800 to-blue-500 lg:p-4 p-4 pl-8 text-gray-100 rounded-lg  content-center shadow-xl">
+        <div class="flex flex-col gap-2">
+            <p class="text-sm">Total Amount to be settled</p>
+            <div class="flex gap-1">
+                <p>₹</p>
+                <p class="text-3xl">{{totalAmountToBePaidIncludingParcel}}</p>
+            </div>
+        </div>
+        <div class="flex flex-col gap-2">
+            <p>Enter the Amount</p>
+            <input type="number" step="0.01" class="border-2 border-gray-300 rounded-lg px-2 text-gray-900 w-1/2" name="paymentAmount">
+        </div>
+        <div class="lg:px-4">
+            <p class="mb-2">Mode of Payment</p>
+            <select name="modeOfPayment" id="" class="bg-blue-800 rounded-lg px-2">
+                {% for modeOfPayment in modeOfPayments %}
+                    <option value="{{modeOfPayment}}">{{modeOfPayment}}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="content-center lg:pl-6">
+            <input type="submit" value="Settle Now" class="bg-blue-900 shadow-lg hover:bg-green-900 cursor-pointer font-bold px-4 py-2 rounded-lg ">
+        </div>
+    </div>
+
+    <p class="mb-4 font-bold">Collection Summary</p>
+    <div class="grid lg:grid-cols-3 grid-cols-1 shadow-xl">
+        <div class="bg-gray-800 text-gray-100 p-4 flex flex-col gap-2 rounded-l-lg">
+            
+            <p class="text-sm">Total Item Sales</p>
+            <div class="flex gap-1">
+                <p>₹</p>
+                <p class="text-2xl">{{totalSaleAmount}}</p>
+            </div>
+            
+        </div>
+        
+        <div class="p-4  bg-gradient-to-r from-green-200 to-green-100 flex gap-2">
+            <div class="flex flex-col gap-2">
+                <p class="text-sm">Shri Fresh 2 Fresh ( {{sharePercentage}} % )</p>
+                <div class="flex gap-1">
+                    <p>₹</p>
+                    <p class="text-2xl">{{totalAmountToKeep}}</p>
+                </div>
+            </div>
+            
+        </div>
+
+        <div class="p-4 bg-gradient-to-r from-yellow-200 to-yellow-100 rounded-r-lg">
+            <div class="flex flex-col gap-2">
+                <p class="text-sm">Hashtopia Foods ( {{settlementPercentage}} % )</p>
+                <div class="flex gap-1">
+                    <p>₹</p>
+                    <p class="text-2xl">{{totalAmountToBePaid}}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="my-6">
+        <p class="font-bold">Settlement Summary</p>
+        <div class=" mt-4 p-4 shadow-lg bg-gradient-to-r from-gray-300 to-gray-200 rounded-lg">
+            <div class="grid lg:grid-cols-4 grid-cols-1 gap-4">
+                <div class="flex flex-col gap-2">
+                    <p class="text-sm"> Sales ({{settlementPercentage}}%) </p>
+                    <div class="flex gap-1"> 
+                        <p>₹</p>
+                        <p class="text-2xl">{{totalAmountToBePaid}} </p> 
+                    </div>
+                </div>
+                <div class="flex flex-col gap-2">
+                    <p class="text-sm"> Parcel </p>
+                    <div class="flex gap-1"> 
+                        <p>₹</p>
+                        <p class="text-2xl">{{totalParcelAmount}} </p> 
+                    </div>
+                </div>
+                <div class="flex flex-col gap-2">
+                    <p class="text-sm"> Past Balance </p>
+                    <div class="flex gap-1"> 
+                        <p>₹</p>
+                        <p class="text-2xl">{{totalBalanceSettlementAmount}} </p> 
+                    </div>
+                </div>
+                
+                <div class="">
+                    <p class="text-sm">Final Total</p>
+                    <div class="flex gap-1">
+                        <p>₹</p>
+                        <p class="text-2xl">{{totalAmountToBePaidIncludingParcel}}</p>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+    </div>
+    <div class="lg:w-2/5 px-2">
+    <div>
+        <p class="font-bold">Un-Settled Bills</p>
+        <table class="mt-4 px-2 w-full text-left">
+            <thead class="bg-gray-300">
+                <th>Bill ID</th><th>Date & Time</th><th>Sale</th><th>Parcel</th><th>Total</th><th>Mode</th>
+            </thead>
+            <tbody>
+                {% for bill in bills %}
+                    <tr>
+                        <td>{{bill.id}}</td>
+                        <td>{{bill.dateTime}}</td>
+                        <td>{{bill.order.finalPrice}}</td>
+                        <td>{{bill.order.totalParcelCharge}}</td>
+                        <td>{{bill.order.finalPriceIncludedParcel}}</td>
+                        <td>{{bill.order.orderMode}}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+
+    {% if totalBalanceSettlementAmount > 0 %}
+    <div class="mt-8">
+        <p class="font-bold">Balance Amount (Partially Settled)</p>
+
+        <table class="text-left mt-4 w-full">
+            <thead class="bg-gray-300"><th>Date-Time</th><th>Total to be paid</th><th>Paid Amount</th><th>Balance</th></thead>
+            <tbody>
+                {% for settlement in partiallyPaidSettlements %}
+                <tr>
+                    <td>{{settlement.dateTime}}</td>
+                    <td>{{settlement.totalAmountToBeSettled}}</td>
+                    <td>{{settlement.paymentRecieved}}</td>
+                    <td>{{settlement.balancePayment}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+    </div>
+
+</div>
+</form>
+{% endblock %}

@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+{% block content %}
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+<div class="text-sm lg:text-md">
+    <div class="flex justify-between px-4 my-4 lg:flex-row flex-col">
+    <h1 class="font-bold">Item Quantity/Price Analysis</h1>
+
+    <form method="GET">
+        <div class="flex gap-2 lg:flex-row flex-col">
+        <p class="font-bold">From : </p>
+        <input type="date" name="start-date" class="border-2 border-gray-300 rounded-lg px-2">
+        <p>To</p>
+        <input type="date" name="end-date" class="border-2 border-gray-300 rounded-lg px-2">
+        <input type="submit" value="Filter" class="bg-blue-800 px-2 rounded-lg text-gray-100">
+        </div>
+    </form>
+    </div>
+
+    <div class="flex gap-2 lg:flex-row flex-col">
+    <div id="pie_chart" class="lg:h-96 h-64 lg:w-2/3"></div>
+    <div class="lg:w-1/3 p-2">
+        <table class="lg:w-3/4 text-left">
+            <thead><th>Item</th><th>Qty</th></thead>
+            <tbody>
+                {% for item in aggregated_data %}
+                <tr>
+                    <td>{{ item.menuItem__name }}</td>
+                    <td>{{ item.total_quantity_sold }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    </div>
+
+    <p class="my-4">Item Price Analytics</p>
+    <div class="flex gap-2 flex-col lg:flex-row">
+    <div id="pie_chart_sales" class="lg:h-96 lg:w-2/3 h-64"></div>
+    <div class="lg:w-1/3 p-2">
+        <table class="lg:w-3/4 text-left">
+            <thead><th>Item</th><th>Qty</th></thead>
+            <tbody>
+                {% for item in sales_data %}
+                <tr>
+                    <td>{{ item.menuItem__name }}</td>
+                    <td>{{ item.total_amount_sold }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    </div>
+    
+
+</div>
+
+<script type="text/javascript">
+        google.charts.load('current', {'packages':['corechart']});
+        google.charts.setOnLoadCallback(drawChart);
+
+        function drawChart() {
+            var data = google.visualization.arrayToDataTable([
+                ['Menu Item', 'Total Quantity Sold'],
+                {% for row in chart_data %}
+                    ['{{ row.0 }}', {{ row.1 }}],
+                {% endfor %}
+            ]);
+
+            var options = {
+                title: 'Total Quantity Sold of Each Menu Item',
+                chartArea: {width: '50%'},
+                hAxis: {
+                    title: 'Total Quantity Sold',
+                    minValue: 0
+                },
+                vAxis: {
+                    title: 'Menu Item'
+                }
+            };
+
+
+            var barChart = new google.visualization.PieChart(document.getElementById('pie_chart'));
+            barChart.draw(data,options);
+        }
+</script>
+<script type="text/javascript">
+        google.charts.load('current', {'packages':['corechart']});
+        google.charts.setOnLoadCallback(drawChart);
+
+        function drawChart() {
+            var data = google.visualization.arrayToDataTable([
+                ['Menu Item', 'Total Amount Sold'],
+                {% for row in chart_sales_data %}
+                    ['{{ row.0 }}', {{ row.1 }}],
+                {% endfor %}
+            ]);
+
+            var options = {
+                title: 'Total Amount Sold of Each Menu Item',
+                chartArea: {width: '50%'},
+                hAxis: {
+                    title: 'Total Amount Sold',
+                    minValue: 0
+                },
+                vAxis: {
+                    title: 'Menu Item'
+                }
+            };
+
+
+            var barChart = new google.visualization.PieChart(document.getElementById('pie_chart_sales'));
+            barChart.draw(data,options);
+        }
+</script>
+
+{% endblock %}

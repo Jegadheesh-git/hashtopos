@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hashtopia Foods</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    
+    <div class="flex h-screen flex-col lg:flex-row">
+        <div class="bg-gray-800 lg:w-2/12 flex flex-col lg:h-screen lg:overflow-y-auto">
+            <div class="flex justify-between px-4 lg:hidden bg-gray-900">
+                <h3 class="text-gray-100 font-bold text-lg  text-center p-2">Hashtopia</h3>
+                <p class="text-gray-100 font-bold text-lg  text-center p-2" id="menu-expander">☰</p>
+            </div>
+            <div id="menu" class="hidden lg:block">
+                
+                <h3 class="text-gray-100 font-bold text-lg bg-gray-900 text-center pt-5 pb-5 hidden lg:block">Hashtopia</h3>
+                
+                <div class="p-1 flex flex-col gap-4 lg:flex-col lg:gap-2 text-gray-400 justify-center">
+                    
+                    <p class="bg-blue-900 px-2 font-bold">ORDERS</p>
+                    <p><a href="{% url 'get_menu' %}">New Order</a></p>
+                    <p><a href="{% url 'all_orders' %}">All orders</a></p>
+                    <p><a href="{% url 'in_progress_orders' %}">In-Progress</a></p>
+                    <p><a href="{% url 'unbilled_orders' %}">Unbilled orders</a></p>
+                    <p><a href="{% url 'get_all_bills' %}">All Bills</a></p>
+
+                    {% if user.last_name == 'Admin' or user.last_name == 'Partner' %}
+
+                    <p class="bg-blue-900 px-2 font-bold">SETTLEMENTS</p>
+                    <p><a href="{% url 'all_unsettled_bills' %}">Un-Settled Bills</a></p>
+                    <p><a href="{% url 'all_settlements' %}">All Settlements</a></p>
+
+                    {% endif %}
+
+                    {% if user.last_name == 'Admin' or user.last_name == 'Staff' %}
+
+                    <p class="bg-blue-900 px-2 font-bold">INVENTORY</p>
+                    <p><a href="{% url 'add_purchase' %}">Add Purchase</a></p>
+                    <p><a href="{% url 'all_purchases' %}">All Purchase</a></p>
+                    <p><a href="{% url 'inventory_check' %}">Inventory Check</a></p>
+                    <p><a href="{% url 'shopping_todo' %}">Shopping TODO</a></p>
+                    <p><a href="{% url 'inventory_adjustment' %}">Inventory Adjustment</a></p>
+
+                    {% endif %}
+        
+                    {% if user.last_name == 'Admin' %}
+                    <p class="bg-blue-900 px-2 font-bold">ADMIN TASKS</p>
+                    <p><a href="{% url 'all_inventory_adjustments' %}">All Adjustment</a></p>
+                    <p><a href="{% url 'all_order_time_taken' %}">Order Time Taken</a></p>
+                    <p><a href="{% url 'all_attendance_entries' %}">All attendance entries</a></p>
+                    <p><a href="{% url 'purchase_vendors' %}">Purchase vendors</a></p>
+                    
+
+                    <p class="bg-blue-900 px-2 font-bold">SALES & EXPENSES</p>
+                    <p><a href="{% url 'add_expense' %}">Add expenses</a></p>
+                    <p><a href="{% url 'all_expenses' %}">All expenses</a></p>
+                    <p><a href="{% url 'sales_dashboard' %}">Sales Dashboard</a></p>
+                    <p><a href="{% url 'item_dashboard' %}">Item Dashboard</a></p>
+                    <p><a href="{% url 'purchase_dashboard' %}">Purchase Dashboard</a></p>
+                    <p><a href="{% url 'income_expense_dashboard' %}">Income / Expense</a></p>
+                    
+                    {% endif %}
+
+                    {% if user.last_name == 'Admin' or user.last_name == 'Staff' %}
+
+                    <p class="bg-blue-900 px-2 font-bold">FEEDBACKS</p>
+                    <p><a href="{% url 'add_customer_feedback' %}">Add Customer Feedback</a></p>
+                    <p><a href="{% url 'get_all_customer_feedbacks' %}">All Customer Feedback</a></p>
+
+
+                    <p class="bg-blue-900 px-2 font-bold">ATTENDANCE & TASKS</p>
+                    <p><a href="{% url 'add_attendance' %}">Add attendance</a></p>
+                    <p><a href="{% url 'entry_tasks' %}">Entry Tasks</a></p>
+                    <p><a href="{% url 'exit_tasks' %}">Exit Tasks</a></p>
+                    <p><a href="{% url 'apply_leave' %}">Apply Leave</a></p>
+
+                    {% endif %}
+
+                    {% if user.is_authenticated %}
+                        <p class="bg-blue-900 p-1 text-gray-100 w-full"><a href="{% url 'logout' %}">Logout</a></p>
+                    {% endif %}
+                    
+                    
+
+                </div>
+            </div>
+            
+        </div>
+        <div class="lg:w-10/12 px-4 py-4 overflow-auto">
+            
+            {% block content %}
+            <!-- Default content here -->
+            {% endblock %}
+
+        </div>      
+    </div>
+
+<script>
+    $(document).ready(function(){
+        $('#menu-expander').click(function(){
+            if($('#menu').hasClass('hidden')){
+                $('#menu').removeClass('hidden');
+            }
+            else{
+                $('#menu').addClass('hidden');
+            }
+        })
+    });
+</script>
+
+</body>
+</html>

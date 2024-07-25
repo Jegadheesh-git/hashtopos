@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="p-8">
+
+    <div class="flex flex-col gap-4">
+    <h1 class="text-xl text-blue-600 font-bold">Staff Attendance Register</h1>
+
+    <div class="text-lg">
+        <p >Date & Time : {{date}}</p>
+        <p >Staff Name : {{user.first_name}}</p>
+    </div>
+    <form method="POST">
+        {% csrf_token %}
+        <input type="text" name="deviceType" id="deviceType" hidden>
+        <input type="text" name="deviceName" id="deviceName" hidden>
+
+    {% if not hasEntriesToday %}
+        <select name="attendance-type" id="" class="border-2 border-gray-400 rounded-lg px-2">
+            <option value="start">Start Entry</option>
+        </select>
+        <input type="submit" value="Submit" class="bg-green-800 px-2 text-gray-100 rounded-lg shadow-lg">
+    {% else %}
+        <div class="my-8 lg:text-3xl text-xl">
+            <p>{{totalCompletedTasksCount}} / {{totalTasksCount}} - Tasks Completed</p>
+        </div>
+
+        <select name="attendance-type" id="" class="border-2 border-gray-400 rounded-lg px-2">
+            <option value="break">Take Break</option>
+            {% if totalCompletedTasksCount == totalTasksCount %}
+            <option value="end">End the Day</option>
+            {% endif %}
+        </select>
+        <input type="submit" value="Update" class="bg-red-800 px-2 text-gray-100 rounded-lg shadow-lg">
+
+        
+    {% endif %}
+    </form>
+    </div>
+
+    <div>
+        
+    </div>
+
+</div>
+
+<script>
+    $(document).ready(function() {
+    var deviceType = "";
+    var deviceName = "";
+
+    var userAgent = navigator.userAgent;
+    if (/android/i.test(userAgent)) {
+        deviceType = "Android";
+    } else if (/iphone|ipad|ipod/i.test(userAgent)) {
+        deviceType = "iOS";
+    } else {
+        deviceType = "Desktop";
+    }
+
+    if (navigator.platform) {
+        deviceName = navigator.platform;
+    }
+
+    
+    
+    $('#deviceType').val(deviceType);
+    $('#deviceName').val(deviceName);
+    
+
+    
+});
+
+</script>
+
+{% endblock %}

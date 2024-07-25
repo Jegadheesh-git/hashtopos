@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="mt-4 ml-4">
+    <h1>All Customer Feedbacks</h1>
+
+    <div class="mt-4 ">
+        {% for customerFeedback in customerFeedbacks %}
+            <div class="grid lg:grid-cols-4 gap-2 bg-gray-300 px-2 py-2">
+                <p>{{customerFeedback.dateTime}}</p>
+                <p>{{customerFeedback.feedBackType}}</p>
+                <p>{{customerFeedback.feedbackSummary}}</p>
+                <p>{% if customerFeedback.hasDiscussed %} Discussed {% else %} Not Discussed {% endif %}</p>
+                
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}

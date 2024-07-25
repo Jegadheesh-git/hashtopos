@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="flex justify-between lg:flex-row flex-col">
+    <p class="font-bold text-sm">Today's Completed Bills</p>
+    <div class="flex gap-4 text-sm lg:text-md lg:flex-row flex-col">
+        <p>Total Orders: {{billCount}}</p>
+        <p class="hidden lg:block">|</p>
+        <p>Today's Collection: ₹ {{totalAmount}}</p>
+    </div>
+</div>
+            <div class="mt-4 flex flex-col gap-2 lg:w-2/3 p-1 text-sm ">
+                {% for bill in bills %}
+                    <div class="grid lg:grid-cols-7 grid-cols-4 p-2 lg:gap-4 rounded-lg justify-between shadow-md bg-gray-300">
+                        <p class="hidden lg:block">B-{{bill.id}}</p>
+                        <p class="hidden lg:block px-4 font-bold rounded-lg">O-{{bill.order.id}}</p> 
+                        <p>{{bill.dateTime|time:"h:i a" }}</p> 
+                        <div class="opacity-9x0">   
+                            <p class="{{bill.order.orderMode.colour}} px-2 rounded-sm text-center text-gray-200">{{bill.order.orderMode}}</p>
+                        </div>
+                        <p class="font-bold text-center">₹{{bill.order.finalPriceIncludedParcel}}</p>
+                        <p class="hidden lg:block">{{bill.customer.phone}}</p>
+                        <p class="expand-bill-summary cursor-pointer text-right">ℹ️</p>    
+                    </div>
+                    <div class="bg-gray-200 lg:px-4 rounded-b-lg bill-summary hidden">
+                        <table class="table lg:w-1/2 w-full  text-left">
+                            <thead><th>Item</th><th>Price</th><th>Qty</th><th>Total</th><th>Final</th></thead>
+                            <tbody>
+                                {% for orderItem in bill.order.orderItems.all %}
+                                    <tr>
+                                        <td>{{orderItem.menuItem.name}}</td>
+                                        <td>{{orderItem.menuItem.price}}</td>
+                                        <td>{{orderItem.quantity}}</td>
+                                        <td>{{orderItem.totalPrice}}</td>
+                                        <td>{{orderItem.finalPrice}}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% endfor %}
+            </div>
+        
+<script>
+    $(document).ready(function(){
+        $('.expand-bill-summary').click(function(){
+            $('.bill-summary').addClass('hidden');
+            if($(this).parent().next().hasClass('hidden')){
+                $(this).parent().next().removeClass('hidden');
+            }
+            else{
+                $('.bill-summary').addClass('hidden');
+            }
+        })
+    })
+</script>
+
+{% endblock %}

@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div>
+    <div class="flex flex-col lg:flex-row justify-between px-4">
+    <h1 class="font-bold">Income/Expense/Profit</h1>
+
+    <form method="GET">
+        <div class="flex gap-2 lg:flex-row flex-col">
+        <p class="font-bold">From : </p>
+        <input type="date" name="start-date" class="border-2 border-gray-300 rounded-lg px-2">
+        <p>To</p>
+        <input type="date" name="end-date" class="border-2 border-gray-300 rounded-lg px-2">
+        <input type="submit" value="Filter" class="bg-blue-800 px-2 rounded-lg text-gray-100">
+        </div>
+    </form>
+    </div>
+
+    <div class="mt-8 grid lg:grid-cols-5 grid-cols-1 shadow-lg text-gray-100">
+        <div class="bg-gradient-to-r from-blue-800 to-blue-600 p-4 rounded-tl-xl">
+            <p>Total Payment Amount</p>
+            <p class="text-3xl">{{totalPaymentAmount}}</p>
+        </div>
+        <div class="bg-gradient-to-r from-red-800 to-red-600 p-4">
+            <p>Total Purchase Amount</p>
+            <p class="text-3xl">{{totalPurchaseAmount}}</p>
+        </div>
+        
+        <div class="bg-gradient-to-r from-red-600 to-red-400 p-4 ">
+            <p>Total Other Expense Amount</p>
+            <p class="text-3xl">{{totalOtherExpenseAmount}}</p>
+        </div>
+
+        <div class="bg-gradient-to-r from-red-400 to-red-800 p-4 ">
+            <p>Total Expense Amount</p>
+            <p class="text-3xl">{{totalExpenseAmount}}</p>
+        </div>
+
+        <div class="bg-gradient-to-r from-green-800 to-green-600 p-4 rounded-br-xl">
+            <p>Total Profit Amount</p>
+            <p class="text-3xl">{{totalProfitAmount}}</p>
+            <p>{{profitPercentage  }} %</p>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
