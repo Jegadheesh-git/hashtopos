@@ -23,9 +23,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'zrpkk#4%1oskjh_4-tfa)*cn#%eo_$5!8*k3*ez6c$(pte=)&w'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['hashtopos-production.up.railway.app']
 
 
 # Application definition
