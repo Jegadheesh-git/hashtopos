@@ -32,11 +32,13 @@
  
                                     <p class="font-bold text-sm">{{ item.name }}</p>                                    
                                     <p class="text-sm">₹{{ item.price }}</p>
-                                
+
+                                    <div>
                                     <div class="flex justify-between bg-gray-200 gap-2 rounded-md quantity-container">
                                         <p class="px-1 cursor-pointer sub-btn bg-gray-300 opacity-50 rounded-l-md">-</p>
                                         <input type="number" min="0" value="0" class="quantity-input hidden" data-id="{{ item.id }}" name="{{item.id}}">
                                         <p class="count-txt">0</p>  <p class="bg-blue-600 px-1 rounded-r-md text-gray-100 cursor-pointer add-btn">+</p>
+                                    </div>
                                     </div>
                                 
                                 </div>
