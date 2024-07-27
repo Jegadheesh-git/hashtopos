@@ -18,7 +18,7 @@ def getAllBills(request):
 def generateBill(request,pk):
     order = Order.objects.get(pk=pk)
     orderStatus = OrderStatus.objects.get(pk=3)
-    if order.status = orderStatus:
+    if order.status == orderStatus:
         return redirect('get_all_bills')
     if order.orderMode.quickBill:
         bill = Bill(
