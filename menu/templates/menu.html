@@ -27,14 +27,14 @@
                     <ul class="hidden category-items">
                         <div class="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-4   lg:gap-8 ">
                             {% for item in items %}
-                                <div class="flex  gap-2 shadow-lg p-1 border-solid border-2 border-sky-500 rounded-lg justify-evenly">
+                                <div class="grid grid-cols-2 lg:flex lg:justify-between pr-8 lg:pr-1  gap-2 shadow-lg p-1 border-solid border-2 border-sky-500 rounded-lg justify-evenly">
                                     <img src="{{ item.picture }}" alt=""  class="rounded w-8 h-6">
  
                                     <p class="font-bold text-sm">{{ item.name }}</p>                                    
                                     <p class="text-sm">₹{{ item.price }}</p>
 
                                     <div>
-                                    <div class="flex justify-between bg-gray-200 gap-2 rounded-md quantity-container">
+                                    <div class="flex justify-between bg-gray-200 gap-2 rounded-md quantity-container px-4 lg:px-0">
                                         <p class="px-1 cursor-pointer sub-btn bg-gray-300 opacity-50 rounded-l-md">-</p>
                                         <input type="number" min="0" value="0" class="quantity-input hidden" data-id="{{ item.id }}" name="{{item.id}}">
                                         <p class="count-txt">0</p>  <p class="bg-blue-600 px-1 rounded-r-md text-gray-100 cursor-pointer add-btn">+</p>
