@@ -9,7 +9,7 @@ from django.contrib.auth.decorators import login_required
 @login_required(login_url='/login/')
 def getAllBills(request):
     bills = Bill.objects.filter(dateTime__date=date.today()).order_by('-dateTime')
-    orders = Order.objects.filter(orderDateTime__date=date.today()).order_by('-dateTime')
+    orders = Order.objects.filter(orderDateTime__date=date.today()).order_by('-orderDateTime')
     billCount = bills.count()
     totalAmount = orders.aggregate(total=Sum('finalPriceIncludedParcel'))['total']
 
